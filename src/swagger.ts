@@ -122,6 +122,65 @@ export const swaggerDocument = {
           }
         }
       }
+    },
+    '/brain': {
+      get: {
+        summary: 'Get all summaries with optional search',
+        description: 'Retrieves all stored summaries, optionally filtered by a search term',
+        parameters: [
+          {
+            name: 'search',
+            in: 'query',
+            description: 'Search term to filter summaries by title, content, or URL',
+            required: false,
+            schema: {
+              type: 'string'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successful operation',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    summaries: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          url: { type: 'string' },
+                          title: { type: 'string' },
+                          content: { type: 'string' },
+                          summary: { type: 'string' },
+                          timeSpent: { type: 'number' },
+                          scrollDepth: { type: 'number' },
+                          createdAt: { type: 'string' }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          '500': {
+            description: 'Server error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    error: { type: 'string' }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }; 

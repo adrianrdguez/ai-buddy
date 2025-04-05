@@ -47,3 +47,24 @@ export async function summarizeAndStore(data: PageData): Promise<string> {
 
   return summary;
 }
+
+export async function getSummaries(searchTerm?: string): Promise<any[]> {
+  const filePath = path.resolve(__dirname, '../brain.json');
+  let summaries = [];
+
+  try {
+    const existing = await fs.readFile(filePath, 'utf-8');
+    summaries = JSON.parse(existing);
+  } catch (_) {}
+
+  if (searchTerm) {
+    const searchLower = searchTerm.toLowerCase();
+    summaries = summaries.filter((item: PageData & { summary: string; createdAt: string }) => 
+      item.title.toLowerCase().includes(searchLower) ||
+      item.summary.toLowerCase().includes(searchLower) ||
+      item.url.toLowerCase().includes(searchLower)
+    );
+  }
+
+  return summaries;
+}

@@ -3,7 +3,7 @@ import express, { Request, Response, Express, RequestHandler } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
-import { summarizeAndStore } from './summarize';
+import { summarizeAndStore, getSummaries } from './summarize';
 import { swaggerDocument } from './swagger';
 
 dotenv.config();
@@ -36,6 +36,17 @@ const summarizeHandler: RequestHandler = async (req: Request, res: Response): Pr
 };
 
 app.post('/summarize', summarizeHandler);
+
+app.get('/brain', async (req: Request, res: Response) => {
+  try {
+    const searchTerm = req.query.search as string | undefined;
+    const summaries = await getSummaries(searchTerm);
+    res.json({ summaries });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to retrieve summaries.' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`🧠 Second Brain API running at http://localhost:${PORT}`);
