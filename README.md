@@ -1,13 +1,25 @@
-# Second Brain API
+# Chrome Buddy
 
-A backend service that summarizes web pages and stores them in your personal "second brain" using OpenAI's GPT models.
+A Chrome extension that helps you build your personal "second brain" by summarizing web pages and providing an intelligent chat interface to interact with your knowledge base.
 
 ## Features
 
-- Summarize web page content into bullet points
-- Store summaries with metadata (URL, title, time spent, scroll depth)
-- REST API with Swagger documentation
-- Local JSON storage (mock "second brain")
+- **Web Page Summarization**
+  - Automatic summarization of web pages into concise bullet points
+  - Stores summaries with metadata (URL, title, time spent, scroll depth)
+  - Option to enable/disable auto-summarization
+
+- **Intelligent Chat Interface**
+  - Chat with your knowledge base using natural language
+  - Get concise, well-structured responses
+  - Real-time thinking indicator
+  - Clean, formatted output with bullet points
+
+- **Backend Service**
+  - REST API with Swagger documentation
+  - OpenAI GPT integration for intelligent responses
+  - Semantic search for relevant information
+  - Local JSON storage (mock "second brain")
 
 ## Setup
 
@@ -20,6 +32,11 @@ A backend service that summarizes web pages and stores them in your personal "se
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
+
+4. Load the Chrome extension:
+   - Open Chrome and go to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked" and select the `chrome-extension` directory
 
 ## Running the Server
 
@@ -35,7 +52,7 @@ The server will start at `http://localhost:3001`
 Access the Swagger UI documentation at:
 `http://localhost:3001/api-docs`
 
-### Endpoints
+### Key Endpoints
 
 - `GET /`: Health check endpoint
 - `POST /summarize`: Summarize web page content
@@ -48,13 +65,29 @@ Access the Swagger UI documentation at:
     "scrollDepth": 0.8
   }
   ```
+- `POST /chat`: Chat with your knowledge base
+  ```json
+  {
+    "message": "What do you know about X?"
+  }
+  ```
 
 ## Project Structure
 
-- `src/index.ts`: Main Express server setup
-- `src/summarize.ts`: OpenAI integration and summarization logic
-- `src/swagger.ts`: API documentation
-- `brain.json`: Local storage for summaries (created automatically)
+- `src/`
+  - `index.ts`: Main Express server setup
+  - `summarize.ts`: OpenAI integration and summarization logic
+  - `chat.ts`: Chat interface and response generation
+  - `swagger.ts`: API documentation
+  - `config/`: Configuration files
+  - `db/`: Database-related code
+
+- `chrome-extension/`
+  - `popup.html`: Extension popup interface
+  - `popup.js`: Popup functionality and chat interface
+  - `content.js`: Content script for page interaction
+  - `background.js`: Background service worker
+  - `manifest.json`: Extension configuration
 
 ## License
 
