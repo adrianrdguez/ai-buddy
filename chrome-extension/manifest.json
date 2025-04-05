@@ -2,11 +2,15 @@
   "manifest_version": 3,
   "name": "Chrome Buddy",
   "version": "1.0",
-  "description": "Summarize and store web pages to your second brain",
+  "description": "A Chrome extension that helps you learn and remember web content",
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://localhost:3001/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -17,7 +21,8 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {

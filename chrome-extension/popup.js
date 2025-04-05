@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const summarizeButton = document.getElementById('summarize');
   const statusDiv = document.getElementById('status');
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const sendButton = document.getElementById('send-button');
+  const autoSummaryToggle = document.getElementById('auto-summary-toggle');
+  const autoSummaryStatus = document.getElementById('auto-summary-status');
+  let autoSummaryInterval = null;
 
   // Add message to chat
   function addMessage(message, isUser = false) {
@@ -53,7 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  summarizeButton.addEventListener('click', async () => {
+  // Function to summarize the current page
+  async function summarizeCurrentPage() {
     try {
       // Get the active tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -91,6 +94,24 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       console.error('Error:', error);
       showStatus('Error: ' + error.message, 'error');
+    }
+  }
+
+  // Handle auto-summary toggle
+  autoSummaryToggle.addEventListener('change', async (e) => {
+    const isEnabled = e.target.checked;
+    autoSummaryStatus.textContent = `Auto-summary: ${isEnabled ? 'On' : 'Off'}`;
+    
+    if (isEnabled) {
+      // Start periodic summarization
+      await summarizeCurrentPage(); // Initial summarization
+      autoSummaryInterval = setInterval(summarizeCurrentPage, 30000); // Every 30 seconds
+    } else {
+      // Stop periodic summarization
+      if (autoSummaryInterval) {
+        clearInterval(autoSummaryInterval);
+        autoSummaryInterval = null;
+      }
     }
   });
 
