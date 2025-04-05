@@ -4,12 +4,11 @@
   <title>Chrome Buddy</title>
   <style>
     body {
-      width: 300px;
+      width: 400px;
       padding: 10px;
       font-family: Arial, sans-serif;
     }
     button {
-      width: 100%;
       padding: 10px;
       margin: 5px 0;
       background-color: #4CAF50;
@@ -34,12 +33,62 @@
       background-color: #f2dede;
       color: #a94442;
     }
+    .chat-container {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+    .chat-messages {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    .user-message {
+      background-color: #e3f2fd;
+      margin-left: 20%;
+    }
+    .bot-message {
+      background-color: #f1f1f1;
+      margin-right: 20%;
+    }
+    .chat-input {
+      display: flex;
+      gap: 10px;
+    }
+    #chat-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    #send-button {
+      width: auto;
+    }
   </style>
 </head>
 <body>
   <h2>Chrome Buddy</h2>
   <button id="summarize">Summarize Current Page</button>
   <div id="status"></div>
+  
+  <div class="chat-container">
+    <h3>Chat with Your Brain</h3>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Ask a question...">
+      <button id="send-button">Send</button>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html> 

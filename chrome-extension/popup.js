@@ -1,6 +1,57 @@
 document.addEventListener('DOMContentLoaded', function() {
   const summarizeButton = document.getElementById('summarize');
   const statusDiv = document.getElementById('status');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  const sendButton = document.getElementById('send-button');
+
+  // Add message to chat
+  function addMessage(message, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    messageDiv.textContent = message;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Handle chat input
+  async function handleChatInput() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    // Add user message to chat
+    addMessage(message, true);
+    chatInput.value = '';
+
+    try {
+      // Send message to backend
+      const response = await fetch('http://localhost:3001/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data = await response.json();
+      addMessage(data.response);
+    } catch (error) {
+      console.error('Error:', error);
+      addMessage('Sorry, I encountered an error. Please try again.');
+    }
+  }
+
+  // Event listeners
+  sendButton.addEventListener('click', handleChatInput);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleChatInput();
+    }
+  });
 
   summarizeButton.addEventListener('click', async () => {
     try {
@@ -25,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
           url: tab.url,
           title: tab.title,
           content: pageContent,
-          timeSpent: 0, // You can track this if needed
-          scrollDepth: 0 // You can track this if needed
+          timeSpent: 0,
+          scrollDepth: 0
         })
       });
 
@@ -36,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const data = await response.json();
       showStatus('Page summarized successfully!', 'success');
+      addMessage('I just learned about: ' + tab.title, false);
     } catch (error) {
       console.error('Error:', error);
       showStatus('Error: ' + error.message, 'error');

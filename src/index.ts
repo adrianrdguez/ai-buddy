@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import { summarizeAndStore, getSummaries } from './summarize';
 import { swaggerDocument } from './swagger';
+import { chatWithBrain } from './chat';
 
 dotenv.config();
 const app: Express = express();
@@ -45,6 +46,22 @@ app.get('/brain', async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to retrieve summaries.' });
+  }
+});
+
+app.post('/chat', async (req: Request, res: Response) => {
+  try {
+    const { message } = req.body;
+    if (!message) {
+      res.status(400).json({ error: 'No message provided.' });
+      return;
+    }
+
+    const response = await chatWithBrain(message);
+    res.json({ response });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Chat query failed.' });
   }
 });
 
