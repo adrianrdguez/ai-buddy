@@ -5,15 +5,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const sendButton = document.getElementById('send-button');
   const autoSummaryToggle = document.getElementById('auto-summary-toggle');
   const autoSummaryStatus = document.getElementById('auto-summary-status');
+  const loadingContainer = document.getElementById('loading-container');
   let autoSummaryInterval = null;
+  let thinkingMessage = null;
 
   // Add message to chat
   function addMessage(message, isUser = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    messageDiv.style.whiteSpace = 'pre-wrap';
     messageDiv.textContent = message;
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    return messageDiv;
+  }
+
+  // Show thinking message
+  function showLoading() {
+    thinkingMessage = addMessage('Thinking...', false);
+    sendButton.disabled = true;
+    chatInput.disabled = true;
+  }
+
+  // Hide thinking message
+  function hideLoading() {
+    if (thinkingMessage) {
+      thinkingMessage.remove();
+      thinkingMessage = null;
+    }
+    sendButton.disabled = false;
+    chatInput.disabled = false;
   }
 
   // Handle chat input
@@ -24,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add user message to chat
     addMessage(message, true);
     chatInput.value = '';
+    showLoading();
 
     try {
       // Send message to backend
@@ -40,9 +62,11 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const data = await response.json();
+      hideLoading();
       addMessage(data.response);
     } catch (error) {
       console.error('Error:', error);
+      hideLoading();
       addMessage('Sorry, I encountered an error. Please try again.');
     }
   }

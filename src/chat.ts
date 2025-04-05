@@ -65,13 +65,41 @@ export async function chatWithBrain(message: string): Promise<string> {
       .map((summary: any) => `Title: ${summary.title}\nSummary: ${summary.summary}\nURL: ${summary.url}`)
       .join('\n\n');
 
-    const prompt = `Based on the following context from my knowledge base, please answer the question. If the answer isn't in the context, say so.\n\nContext:\n${context}\n\nQuestion: ${message}\n\nAnswer:`;
+    const prompt = `You are a helpful AI assistant with access to a knowledge base. Based on the following context, please provide a concise and well-structured answer to the question.
+
+Guidelines for your response:
+1. Keep responses brief and to the point
+2. Use plain text formatting (no markdown)
+3. Use dashes (-) for bullet points
+4. Use indentation with spaces for sub-points
+5. Focus on the most important and relevant details
+6. If information is incomplete, briefly mention what's missing
+
+Format your response like this:
+- Main Point 1
+- Main Point 2
+  - Supporting detail
+  - Supporting detail
+- Main Point 3
+
+Context:
+${context}
+
+Question: ${message}
+
+Please provide a concise and well-structured response using plain text formatting:`;
 
     // Generate response using OpenAI
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo-1106',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: 'You are a helpful AI assistant that provides concise, well-structured responses using plain text formatting. Use dashes for bullet points and indentation for sub-points.' },
+        { role: 'user', content: prompt }
+      ],
       temperature: 0.7,
+      max_tokens: 500,
+      presence_penalty: 0.3,
+      frequency_penalty: 0.2
     });
 
     return response.choices[0].message?.content || "I couldn't generate a response. Please try again.";
