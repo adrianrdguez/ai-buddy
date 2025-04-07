@@ -12,9 +12,10 @@ export interface PageData {
   url: string;
   title: string;
   content: string;
-  timeSpent?: number;
-  scrollDepth?: number;
+  timeSpent: number;
+  scrollDepth: number;
   summary?: string;
+  summaryDepth?: 'quick' | 'detailed' | 'comprehensive';
   createdAt?: string;
 }
 
